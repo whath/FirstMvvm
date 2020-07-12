@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.firstmvvm.R
 import com.example.firstmvvm.logic.model.Place
+import com.example.firstmvvm.ui.weather.WeatherActivity
 
 class PlaceAdapter(private val fragment: Fragment, private val placeList: List<Place>) :
     RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
@@ -19,7 +20,20 @@ class PlaceAdapter(private val fragment: Fragment, private val placeList: List<P
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.place_item, parent, false)
-        return ViewHolder(view)
+
+        val holder = ViewHolder(view)
+        holder.itemView.setOnClickListener {
+            val position = holder.adapterPosition
+            val place = placeList[position]
+            WeatherActivity.start(
+                parent.context,
+                place.location.lng,
+                place.location.lat,
+                place.name
+            )
+        }
+
+        return holder
     }
 
     override fun getItemCount(): Int {
@@ -30,5 +44,6 @@ class PlaceAdapter(private val fragment: Fragment, private val placeList: List<P
         val place = placeList[position]
         holder.placeName.text = place.name
         holder.placeAddress.text = place.address
+
     }
 }
