@@ -2,6 +2,7 @@ package com.example.firstmvvm.logic
 
 
 import androidx.lifecycle.liveData
+import com.example.firstmvvm.logic.dao.PlaceDao
 import com.example.firstmvvm.logic.model.Place
 import com.example.firstmvvm.logic.model.Weather
 import com.example.firstmvvm.logic.network.WeatherNetWork
@@ -46,6 +47,12 @@ object Repository {
         }
     }
 
+    fun savePlace(place: Place) = PlaceDao.savePlace(place)
+
+    fun getSavePlace() = PlaceDao.getSavePlace()
+
+    fun isPlaceSaved()=PlaceDao.isPlaceSaved()
+
     private fun <T> fire(context1: CoroutineContext, block: suspend () -> Result<T>) =
         liveData<Result<T>>(context1) {
             val result = try {
@@ -53,6 +60,6 @@ object Repository {
             } catch (e: Exception) {
                 Result.failure<T>(e)
             }
-            emit(result )
+            emit(result)
         }
 }

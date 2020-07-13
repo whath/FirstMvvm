@@ -11,7 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.firstmvvm.MainActivity
 import com.example.firstmvvm.R
+import com.example.firstmvvm.ui.weather.WeatherActivity
 import kotlinx.android.synthetic.main.fragment_place.*
 
 class PlaceFragment : Fragment() {
@@ -32,6 +34,19 @@ class PlaceFragment : Fragment() {
     @SuppressLint("FragmentLiveDataObserve")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        if (activity is MainActivity && viewModel.isPlaceSaved()) {
+            val savePlace = viewModel.getSavePlace()
+            WeatherActivity.start(
+                context!!,
+                savePlace.location.lng,
+                savePlace.location.lat,
+                savePlace.name
+            )
+            activity?.finish()
+            return
+        }
+
         recyclerView.layoutManager = LinearLayoutManager(activity)
         adapter = PlaceAdapter(this, viewModel.placeList)
         recyclerView.adapter = adapter

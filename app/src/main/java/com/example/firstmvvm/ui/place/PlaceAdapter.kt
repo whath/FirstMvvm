@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.firstmvvm.R
 import com.example.firstmvvm.logic.model.Place
 import com.example.firstmvvm.ui.weather.WeatherActivity
+import kotlinx.android.synthetic.main.activity_weather.*
+import kotlinx.android.synthetic.main.now.*
 
-class PlaceAdapter(private val fragment: Fragment, private val placeList: List<Place>) :
+class PlaceAdapter(private val fragment: PlaceFragment, private val placeList: List<Place>) :
     RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val placeName: TextView = view.findViewById(R.id.placeName)
@@ -25,14 +27,28 @@ class PlaceAdapter(private val fragment: Fragment, private val placeList: List<P
         holder.itemView.setOnClickListener {
             val position = holder.adapterPosition
             val place = placeList[position]
-            WeatherActivity.start(
-                parent.context,
-                place.location.lng,
-                place.location.lat,
-                place.name
-            )
-        }
 
+            val activity = fragment.activity
+            if (activity is WeatherActivity){
+                activity.apply {
+                    drawerLayout.closeDrawers()
+                    viewModel.locationLng = place.location.lng
+                    viewModel.locationLat = place.location.lat
+                    viewModel.placeName = place.name
+                    refreshWeather()
+                }
+            }else{
+                WeatherActivity.start(
+                    parent.context,
+                    place.location.lng,
+                    place.location.lat,
+                    place.name
+                )
+                fragment.viewModel.savePlace(place)
+                activity?.finish()
+            }
+            fragment.viewModel.savePlace(place)
+        }
         return holder
     }
 
